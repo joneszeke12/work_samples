@@ -95,4 +95,4 @@ ON ROWS,
 ON COLUMNS
 FROM [Model]
 WHERE 
-                ([Transaction Expense Category].[SSE Focus Warranty Expense].&[Y]) //SSE Focus Only
+                ([Transaction Expense Category].[SSE Focus Warranty Expense].&[Y])
