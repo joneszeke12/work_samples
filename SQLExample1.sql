@@ -19,7 +19,7 @@ qry.last_name,
 qry.first_name,
 qry.other_string23 bufu_id,
 qry.other_string26 location_code,
-qry.other_string19 kn_code,
+qry.other_string19 TEST_code,
 qry.c_employee_cost_center,
 qry.wfs_string3 manager_name,
 qry.other_string10 manager_id,
@@ -39,7 +39,7 @@ e.last_name,
 e.first_name,
 e.other_string23 bufu_id,
 e.other_string26 location_code,
-e.other_string19 kn_code,
+e.other_string19 test_code,
 e.c_employee_cost_center,
 e.wfs_string3 manager_name,
 e.other_string10 manager_id,
@@ -49,9 +49,9 @@ e.other_string9 payroll_range,
 bos.bank,
 bos.balance,
 case 
-when bos.balance between -1 * to_number({?KN_GREEN_VAL_BAND_SQL}) and  to_number({?KN_GREEN_VAL_BAND_SQL}) then 'G'
-when bos.balance between -1 * (to_number({?KN_GREEN_VAL_BAND_SQL}) + to_number({?KN_YELLOW_VAL_BAND_SQL})) and  (to_number({?KN_GREEN_VAL_BAND_SQL}) + to_number({?KN_YELLOW_VAL_BAND_SQL})) then 'Y'
-when bos.balance between -1 * (to_number({?KN_GREEN_VAL_BAND_SQL}) + to_number({?KN_YELLOW_VAL_BAND_SQL}) + to_number({?KN_RED_VAL_BAND_SQL})) and (to_number({?KN_GREEN_VAL_BAND_SQL}) + to_number({?KN_YELLOW_VAL_BAND_SQL}) + to_number({?KN_RED_VAL_BAND_SQL})) then 'R'
+when bos.balance between -1 * to_number({?TEST_GREEN_VAL_BAND_SQL}) and  to_number({?TEST_GREEN_VAL_BAND_SQL}) then 'G'
+when bos.balance between -1 * (to_number({?TEST_GREEN_VAL_BAND_SQL}) + to_number({?TEST_YELLOW_VAL_BAND_SQL})) and  (to_number({?TEST_GREEN_VAL_BAND_SQL}) + to_number({?TEST_YELLOW_VAL_BAND_SQL})) then 'Y'
+when bos.balance between -1 * (to_number({?TEST_GREEN_VAL_BAND_SQL}) + to_number({?TEST_YELLOW_VAL_BAND_SQL}) + to_number({?TEST_RED_VAL_BAND_SQL})) and (to_number({?TEST_GREEN_VAL_BAND_SQL}) + to_number({?TEST_YELLOW_VAL_BAND_SQL}) + to_number({?TEST_RED_VAL_BAND_SQL})) then 'R'
 else null end indicator
 from
 employee e,
@@ -88,19 +88,19 @@ and bos.work_dt = (
                     and bank = bos.bank
                     and work_dt <= {?STD_AS_OF_DATE_SQL}
                   )                                                                                   
-and bos.bank in ('DE_LIEU_BANK')   
+and bos.bank in ('BANK1')   
 and (                 
-		bos.balance between -1 * to_number({?KN_GREEN_VAL_BAND_SQL}) and  to_number({?KN_GREEN_VAL_BAND_SQL})
-		or bos.balance between -1 * (to_number({?KN_GREEN_VAL_BAND_SQL}) + to_number({?KN_YELLOW_VAL_BAND_SQL})) and (to_number({?KN_GREEN_VAL_BAND_SQL}) + to_number({?KN_YELLOW_VAL_BAND_SQL}))
-	    or bos.balance between -1 * (to_number({?KN_GREEN_VAL_BAND_SQL}) + to_number({?KN_YELLOW_VAL_BAND_SQL}) + to_number({?KN_RED_VAL_BAND_SQL})) and (to_number({?KN_GREEN_VAL_BAND_SQL}) + to_number({?KN_YELLOW_VAL_BAND_SQL}) + to_number({?KN_RED_VAL_BAND_SQL}))
+		bos.balance between -1 * to_number({?TEST_GREEN_VAL_BAND_SQL}) and  to_number({?TEST_GREEN_VAL_BAND_SQL})
+		or bos.balance between -1 * (to_number({?TEST_GREEN_VAL_BAND_SQL}) + to_number({?TEST_YELLOW_VAL_BAND_SQL})) and (to_number({?TEST_GREEN_VAL_BAND_SQL}) + to_number({?TEST_YELLOW_VAL_BAND_SQL}))
+	    or bos.balance between -1 * (to_number({?TEST_GREEN_VAL_BAND_SQL}) + to_number({?TEST_YELLOW_VAL_BAND_SQL}) + to_number({?TEST_RED_VAL_BAND_SQL})) and (to_number({?TEST_GREEN_VAL_BAND_SQL}) + to_number({?TEST_YELLOW_VAL_BAND_SQL}) + to_number({?TEST_RED_VAL_BAND_SQL}))
 	)
 and (
-		{?KN_MANAGER_ID_SQL} is null 
-		or {?KN_MANAGER_ID_SQL} = '' 
-		or upper(e.other_string10) like upper({?KN_MANAGER_ID_SQL})
+		{?TEST_MANAGER_ID_SQL} is null 
+		or {?TEST_MANAGER_ID_SQL} = '' 
+		or upper(e.other_string10) like upper({?TEST_MANAGER_ID_SQL})
 	)	
 ) qry
-where (qry.indicator = 'G' and {?KN_GREEN_VAL_EXCLUDE_SQL} = 0)
-or (qry.indicator = 'Y' and {?KN_YELLOW_VAL_EXCLUDE_SQL} = 0)
-or (qry.indicator = 'R' and {?KN_RED_VAL_EXCLUDE_SQL} = 0)
+where (qry.indicator = 'G' and {?TEST_GREEN_VAL_EXCLUDE_SQL} = 0)
+or (qry.indicator = 'Y' and {?TEST_YELLOW_VAL_EXCLUDE_SQL} = 0)
+or (qry.indicator = 'R' and {?TEST_RED_VAL_EXCLUDE_SQL} = 0)
 	
