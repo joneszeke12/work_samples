@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 
+//https://www.geeksforgeeks.org/python-program-to-find-uncommon-words-from-two-strings/
+
 namespace FindUncommonWordsFromTwoStrings
 {
     class Program
