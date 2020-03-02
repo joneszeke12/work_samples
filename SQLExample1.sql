@@ -1,5 +1,5 @@
 /*
-A query I made for a report requested for a customer. The query
+A query I made for a report. The query
 includes Crystal Reports parameters ({?}) in it. I use a concept I've
 read online called transitive closure, basically meaning redundant
 joins, to attempt positively influence the query optimizer. I also created a custom field
