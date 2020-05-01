@@ -1,14 +1,14 @@
 using SpssLib.DataReader;
 using SpssLib.SpssDataset;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 
-namespace SPSSLabelValueCombiner
+namespace SPSSExtractor
 {
-    //A program that takes an SPSS file and produces a tabulated output with labels and values in the data.
+    //A program that takes a SPSS file and produces a KV-like output of labels and data.
     class Program
     {
         [STAThread]
@@ -21,57 +21,50 @@ namespace SPSSLabelValueCombiner
                 string fileName = openFileDialog.FileName;
                 string directory = Path.GetDirectoryName(fileName);
                 string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(fileName);
-                string combinedOutputFileName = directory + "\\" + fileNameWithoutExtension + "_COMBINED.TXT";
+                string outputFileName = directory + "\\" + fileNameWithoutExtension + "_OUTPUT.TXT";
                 string labelOutputFileName = directory + "\\" + fileNameWithoutExtension + "_LABELS.TXT";
                 using (SpssReader spssReader = new SpssReader(new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.Read)))
                 {
-                    using (StreamWriter combinedStreamWriter = new StreamWriter(combinedOutputFileName))
+                    using (StreamWriter streamWriter = new StreamWriter(outputFileName))
                     {
-                        StringBuilder header = new StringBuilder();
                         string delimiter = "|";
                         using (StreamWriter labelStreamWriter = new StreamWriter(labelOutputFileName))
                         {
-                            labelStreamWriter.WriteLine("Name" + delimiter + "Label");
+                            labelStreamWriter.WriteLine("Name%1Label%1Value%1ValueLabel".Replace("%1",delimiter));
                             foreach (Variable variable in spssReader.Variables)
                             {
-                                labelStreamWriter.WriteLine(variable.Name + delimiter + variable.Label);
                                 if (variable.ValueLabels.Any())
                                 {
-                                    header.Append(variable.Name + "Value" + delimiter);
-                                    header.Append(variable.Name + "Label" + delimiter);
+                                    foreach (KeyValuePair<double, string> pair in variable.ValueLabels)
+                                    {
+                                        labelStreamWriter.WriteLine("\"" + variable.Name + "\"" + delimiter + "\"" + variable.Label + "\"" + delimiter + pair.Key + delimiter + pair.Value);
+                                    }
                                 }
                                 else
                                 {
-                                    header.Append(variable.Name + delimiter);
+                                    labelStreamWriter.WriteLine("\"" + variable.Name + "\"" + delimiter + "\"" + variable.Label + "\"" + delimiter + delimiter);
                                 }
                             }
                         }
                         Console.WriteLine(string.Format("{0} created.", labelOutputFileName));
-                        combinedStreamWriter.WriteLine(header);
+                        streamWriter.WriteLine("GeneratedUserID" + delimiter + "Key" + delimiter + "Value");
+                        int i = 1;
                         foreach (Record record in spssReader.Records)
                         {
-                            StringBuilder outputRecord = new StringBuilder();
                             foreach (Variable variable in spssReader.Variables)
                             {
-                                double value = Convert.ToDouble(record.GetValue(variable));
-                                string label = "";
-                                if (variable.ValueLabels.TryGetValue(value, out label))
+                                if (!(record.GetValue(variable) == null))
                                 {
-                                    outputRecord.Append(value + delimiter);
-                                    outputRecord.Append("\"" + label + "\"" + delimiter);
-                                }
-                                else
-                                {
-                                    outputRecord.Append(value + delimiter);
+                                    streamWriter.WriteLine(i + delimiter + variable.Name + delimiter + record.GetValue(variable));
                                 }
                             }
-                            combinedStreamWriter.WriteLine(outputRecord);
+                            i++;
                         }
-                        Console.WriteLine(string.Format("{0} created.", combinedOutputFileName));
+                        Console.WriteLine(string.Format("{0} created.", outputFileName));
                     }                  
                 }
+                Console.WriteLine("Done.");
             }
-            Console.WriteLine("Done.");
             System.Threading.Thread.Sleep(-1);
         }
     }
