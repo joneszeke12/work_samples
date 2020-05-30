@@ -10,7 +10,7 @@ namespace FindUncommonWordsFromTwoStrings
         static void Main(string[] args)
         {
             Console.Write(String.Join(",",FindUncommonWords("the cat in the hat is fun", "the dog in the car is bad")));    
-            System.Threading.Thread.Sleep(1000 * 10);
+            System.Threading.Thread.Sleep(-1);
         }
         public static List<string> FindUncommonWords(string stringA, string stringB)
         {
